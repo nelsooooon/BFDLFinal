@@ -148,13 +148,7 @@ Example HTML snippet:
 <script>
     async function run() {
         const model = await tf.loadLayersModel('http://localhost:8000/tfjs_model/model.json');
-        const img = document.getElementById('input');
-        let tensor = tf.browser.fromPixels(img)
-            .resizeBilinear([128, 128])
-            .toFloat()
-            .div(255)
-            .expandDims();
-        const preds = model.predict(tensor).dataSync();
+        
         // Fetch labels dynamically from tflite/label.txt (served alongside model)
         let labels = [];
         try {
@@ -165,9 +159,23 @@ Example HTML snippet:
             labels = (await resp.text()).trim().split('\n').filter(l => l.trim());
         } catch (err) {
             console.error('Error fetching labels:', err);
-            labels = ['unknown'];
+            labels = ['unknown', 'unknown', 'unknown']; // Fallback for expected 3 classes
         }
-        const idx = preds.reduce((maxIdx, val, i, arr) => val > arr[maxIdx] ? i : maxIdx, 0);
+        
+        const img = document.getElementById('input');
+        let tensor = tf.browser.fromPixels(img)
+            .resizeBilinear([128, 128])
+            .toFloat()
+            .div(255)
+            .expandDims();
+        const preds = model.predict(tensor).dataSync();
+        
+        let idx = 0;
+        if (preds.length > 0) {
+            idx = preds.reduce((maxIdx, val, i, arr) => val > arr[maxIdx] ? i : maxIdx, 0);
+        } else {
+            console.warn('Prediction array is empty. Defaulting to index 0.');
+        }
         console.log('Predicted:', labels[idx], preds);
     }
     run();
