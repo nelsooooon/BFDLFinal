@@ -156,9 +156,18 @@ Example HTML snippet:
             .expandDims();
         const preds = model.predict(tensor).dataSync();
         // Fetch labels dynamically from tflite/label.txt (served alongside model)
-        const resp = await fetch('http://localhost:8000/tflite/label.txt');
-        const labels = (await resp.text()).trim().split('\n');
-        const idx = preds.indexOf(Math.max(...preds));
+        let labels = [];
+        try {
+            const resp = await fetch('http://localhost:8000/tflite/label.txt');
+            if (!resp.ok) {
+                throw new Error(`Failed to fetch labels: ${resp.status} ${resp.statusText}`);
+            }
+            labels = (await resp.text()).trim().split('\n').filter(l => l.trim());
+        } catch (err) {
+            console.error('Error fetching labels:', err);
+            labels = ['unknown'];
+        }
+        const idx = preds.reduce((maxIdx, val, i, arr) => val > arr[maxIdx] ? i : maxIdx, 0);
         console.log('Predicted:', labels[idx], preds);
     }
     run();
