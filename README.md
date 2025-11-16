@@ -24,7 +24,7 @@ tflite/
     model.tflite        # TensorFlow Lite flatbuffer
     label.txt           # Class labels
 tfjs_model/
-	model.json          # TFJS model graph + weights manifest
+    model.json          # TFJS model graph + weights manifest
 notebook.ipynb        # Exploration / experimentation notebook
 requirements.txt      # Python dependencies
 ```
