@@ -15,14 +15,14 @@ This project provides a trained image classification model exported to three dep
 
 ```
 saved_model/          # TensorFlow SavedModel directory
-	saved_model.pb
-	fingerprint.pb
-	variables/
-		variables.index
-		variables.data-00000-of-00001
+    saved_model.pb
+    fingerprint.pb
+    variables/
+        variables.index
+        variables.data-00000-of-00001
 tflite/
-	model.tflite        # TensorFlow Lite flatbuffer
-	label.txt           # Class labels
+    model.tflite        # TensorFlow Lite flatbuffer
+    label.txt           # Class labels
 tfjs_model/
 	model.json          # TFJS model graph + weights manifest
 notebook.ipynb        # Exploration / experimentation notebook
@@ -68,7 +68,7 @@ The model outputs indices mapped to human-readable class names stored line-by-li
 
 ```python
 with open("tflite/label.txt") as f:
-		classes = [line.strip() for line in f if line.strip()]
+    classes = [line.strip() for line in f if line.strip()]
 ```
 
 ## Inference (TensorFlow SavedModel)
@@ -83,7 +83,7 @@ image_path = "image.jpg"  # replace with your test image
 
 # Load labels
 with open("tflite/label.txt") as f:
-		classes = [l.strip() for l in f if l.strip()]
+    classes = [l.strip() for l in f if l.strip()]
 
 # Preprocess image (adjust target_size to training size if different)
 img = load_img(image_path, target_size=(128, 128))
@@ -126,7 +126,7 @@ interpreter.invoke()
 probs = interpreter.get_tensor(output_details[0]["index"])[0]
 
 with open("tflite/label.txt") as f:
-		classes = [l.strip() for l in f if l.strip()]
+    classes = [l.strip() for l in f if l.strip()]
 
 print("Probabilities:", probs)
 print("Predicted class:", classes[int(np.argmax(probs))])
@@ -146,20 +146,22 @@ Example HTML snippet:
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 <img id="input" src="image.jpg" crossorigin="anonymous" />
 <script>
-	async function run() {
-		const model = await tf.loadLayersModel('http://localhost:8000/tfjs_model/model.json');
-		const img = document.getElementById('input');
-		let tensor = tf.browser.fromPixels(img)
-			.resizeBilinear([128, 128])
-			.toFloat()
-			.div(255)
-			.expandDims();
-		const preds = model.predict(tensor).dataSync();
-		const labels = ["glacier", "sea", "street"]; // or fetch dynamically
-		const idx = preds.indexOf(Math.max(...preds));
-		console.log('Predicted:', labels[idx], preds);
-	}
-	run();
+    async function run() {
+        const model = await tf.loadLayersModel('http://localhost:8000/tfjs_model/model.json');
+        const img = document.getElementById('input');
+        let tensor = tf.browser.fromPixels(img)
+            .resizeBilinear([128, 128])
+            .toFloat()
+            .div(255)
+            .expandDims();
+        const preds = model.predict(tensor).dataSync();
+        // Fetch labels dynamically from tflite/label.txt (served alongside model)
+        const resp = await fetch('http://localhost:8000/tflite/label.txt');
+        const labels = (await resp.text()).trim().split('\n');
+        const idx = preds.indexOf(Math.max(...preds));
+        console.log('Predicted:', labels[idx], preds);
+    }
+    run();
 </script>
 ```
 
