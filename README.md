@@ -1,4 +1,4 @@
-# BFDLFinal – Multi-Format TensorFlow Image Classifier
+# BFDLFinal - Multi-Format TensorFlow Image Classifier
 
 This project provides a trained image classification model exported to three deployment targets: native TensorFlow SavedModel, TensorFlow Lite (for mobile/edge), and TensorFlow.js (for browser inference). It predicts one of the classes defined in `tflite/label.txt` (e.g. `glacier`, `sea`, `street`).
 
@@ -36,7 +36,7 @@ requirements.txt      # Python dependencies
 - TensorFlow Lite runtime (included in TensorFlow package)
 - TensorFlow.js (for browser usage)
 - NumPy, OpenCV, Pillow (preprocessing / image loading)
-- Pandas, Matplotlib, Seaborn, scikit-learn (analysis & experimentation – optional at inference time)
+- Pandas, Matplotlib, Seaborn, scikit-learn (analysis & experimentation - optional at inference time)
 - Keras Tuner (used during model development)
 
 Only TensorFlow, NumPy, Pillow (or OpenCV) are strictly required for basic inference.
@@ -188,11 +188,11 @@ Use `notebook.ipynb` to experiment with preprocessing steps, compare outputs bet
 
 ## Important Files
 
-- `saved_model/` – TensorFlow SavedModel directory
-- `tflite/model.tflite` – TensorFlow Lite flatbuffer
-- `tflite/label.txt` – Class labels
-- `tfjs_model/model.json` – TensorFlow.js model (graph + weights manifest)
-- `requirements.txt` – Full dependency list (includes tools used during development)
+- `saved_model/` - TensorFlow SavedModel directory
+- `tflite/model.tflite` - TensorFlow Lite flatbuffer
+- `tflite/label.txt` - Class labels
+- `tfjs_model/model.json` - TensorFlow.js model (graph + weights manifest)
+- `requirements.txt` - Full dependency list (includes tools used during development)
 
 ## Troubleshooting
 
